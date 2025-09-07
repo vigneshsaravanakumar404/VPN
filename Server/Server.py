@@ -76,6 +76,19 @@ class VPNServer:
             threading.Event().wait(1)
             self.print_stats()
 
+    def cleanup_expired_keys(self):
+        while True:
+            threading.Event().wait(60)  # Check every minute
+            current_time = time.time()
+            expired_clients = []
+
+            for addr, key_info in self.client_keys.items():
+                if current_time - key_info["last_activity"] > self.key_expiry_seconds:
+                    expired_clients.append(addr)
+
+            for addr in expired_clients:
+                del self.client_keys[addr]
+
     def handle_client(self, client, addr, conn_num):
         try:
             header = client.recv(4)
