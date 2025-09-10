@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+"""
+Test script to verify encryption is working between client and server
+Run this first to make sure your encryption setup is correct
+"""
+
+import os
+import struct
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+
+
+def create_encryption_key(password):
+    """Create encryption key from password - must match in both client and server"""
+    salt = b"vpn_salt_2024_change_this"
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=100000,
+        backend=default_backend(),
+    )
+    return kdf.derive(password.encode())
+
+
+def encode_data(data, encryption_key):
+    """Encrypt data using AES-256-GCM"""
+    if not data:
+        return data
+
+    try:
+        nonce = os.urandom(12)
+        cipher = Cipher(
+            algorithms.AES(encryption_key), modes.GCM(nonce), backend=default_backend()
+        )
+        encryptor = cipher.encryptor()
+        ciphertext = encryptor.update(data) + encryptor.finalize()
+        tag = encryptor.tag
+
+        # Pack: [nonce_len][nonce][tag_len][tag][ciphertext]
+        encoded = struct.pack("B", len(nonce))
+        encoded += nonce
+        encoded += struct.pack("B", len(tag))
+        encoded += tag
+        encoded += ciphertext
+        return encoded
+    except Exception as e:
+        print(f"Encryption error: {e}")
+        return None
+
+
+def decode_data(data, encryption_key):
+    """Decrypt data using AES-256-GCM"""
+    if not data or len(data) < 2:
+        return data
+
+    try:
+        offset = 0
+
+        # Extract nonce
+        nonce_len = struct.unpack("B", data[offset : offset + 1])[0]
+        offset += 1
+        nonce = data[offset : offset + nonce_len]
+        offset += nonce_len
+
+        # Extract tag
+        tag_len = struct.unpack("B", data[offset : offset + 1])[0]
+        offset += 1
+        tag = data[offset : offset + tag_len]
+        offset += tag_len
+
+        # Rest is ciphertext
+        ciphertext = data[offset:]
+
+        # Decrypt
+        cipher = Cipher(
+            algorithms.AES(encryption_key),
+            modes.GCM(nonce, tag),
+            backend=default_backend(),
+        )
+        decryptor = cipher.decryptor()
+        plaintext = decryptor.update(ciphertext) + decryptor.finalize()
+        return plaintext
+    except Exception as e:
+        print(f"Decryption error: {e}")
+        return None
+
+
+def test_encryption():
+    """Test if encryption/decryption works correctly"""
+    print("=" * 50)
+    print("VPN ENCRYPTION TEST")
+    print("=" * 50)
+
+    # Get password from environment or use default
+    password = os.getenv("VPN_PASSWORD", "change_this_password_immediately")
+    print(f"\n1. Password: '{password[:20]}...' (showing first 20 chars)")
+
+    if password == "change_this_password_immediately":
+        print("   ⚠️  WARNING: Using default password!")
+    else:
+        print("   ✓ Custom password set")
+
+    # Create encryption key
+    print("\n2. Creating encryption key...")
+    key = create_encryption_key(password)
+    print(f"   Key (hex): {key.hex()[:32]}...")
+
+    # Test data
+    test_message = b"Hello, this is a test message for the VPN!"
+    print(f"\n3. Test message: {test_message.decode()}")
+    print(f"   Original size: {len(test_message)} bytes")
+
+    # Encrypt
+    print("\n4. Encrypting...")
+    encrypted = encode_data(test_message, key)
+    if encrypted:
+        print(f"   ✓ Encrypted size: {len(encrypted)} bytes")
+        print(f"   Encrypted (hex): {encrypted.hex()[:64]}...")
+    else:
+        print("   ✗ Encryption failed!")
+        return False
+
+    # Decrypt
+    print("\n5. Decrypting...")
+    decrypted = decode_data(encrypted, key)
+    if decrypted:
+        print(f"   ✓ Decrypted: {decrypted.decode()}")
+    else:
+        print("   ✗ Decryption failed!")
+        return False
+
+    # Verify
+    print("\n6. Verification:")
+    if decrypted == test_message:
+        print("   ✓ SUCCESS! Encryption/decryption working correctly")
+        success = True
+    else:
+        print("   ✗ FAILED! Decrypted message doesn't match original")
+        success = False
+
+    # Test with different password (should fail)
+    print("\n7. Testing with wrong password (should fail)...")
+    wrong_key = create_encryption_key("wrong_password")
+    decrypted_wrong = decode_data(encrypted, wrong_key)
+    if decrypted_wrong is None:
+        print("   ✓ Correctly rejected wrong password")
+    else:
+        print("   ✗ Security issue: wrong password was accepted!")
+        success = False
+
+    print("\n" + "=" * 50)
+    if success:
+        print("✓ ALL TESTS PASSED!")
+        print("\nNext steps:")
+        print("1. Make sure BOTH client and server use the same password")
+        print("2. Set password: $env:VPN_PASSWORD = 'YourPassword'")
+        print("3. Run server: python .\\Server.py --debug")
+        print("4. Run client: python .\\Client.py --server 127.0.0.1 --debug")
+    else:
+        print("✗ TESTS FAILED - Check your setup")
+    print("=" * 50)
+
+    return success
+
+
+if __name__ == "__main__":
+    test_encryption()
