@@ -1,5 +1,12 @@
 TODO:
-  - Auto configure proxy on user's machine
-  - Auto remove proxy on exit
-  - Create EXE for client version without Python dependency
-  - Create small GUI for client version to be able to start/stop VPN and configure settings
+
+- Auto configure proxy on user's machine
+- Auto remove proxy on exit
+- Create EXE for client version without Python dependency
+- Create small GUI for client version to be able to start/stop VPN and configure settings
+- Lambda Deployment for server version
+- Remove encoding key from .env and use new key for each client connection
+
+TODO Version 2:
+
+- Make full VPN
