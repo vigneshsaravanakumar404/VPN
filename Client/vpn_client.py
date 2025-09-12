@@ -6,11 +6,11 @@ Handles all VPN connection and proxy server functionality
 
 import socket
 import struct
-import select
-import json
 import os
 import threading
-import re
+from select import select
+from re import search
+from json import dumps
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
@@ -219,7 +219,7 @@ class VPNClient:
 
     def send_handshake(self, server_socket, tunnel_request):
         """Send initial handshake packet to server"""
-        tunnel_json = json.dumps(tunnel_request).encode("utf-8")
+        tunnel_json = dumps(tunnel_request).encode("utf-8")
         encrypted_packet = self.encode_data(tunnel_json)
 
         if not encrypted_packet:
@@ -278,7 +278,7 @@ class VPNClient:
                 tunnel_request["host"] = host
                 tunnel_request["port"] = port
             else:
-                host_match = re.search(r"Host: (.+)\r?\n", request)
+                host_match = search(r"Host: (.+)\r?\n", request)
                 if not host_match:
                     client.close()
                     return
@@ -330,7 +330,7 @@ class VPNClient:
 
         try:
             while True:
-                readers, _, _ = select.select([client, server], [], [], 1)
+                readers, _, _ = select([client, server], [], [], 1)
 
                 if client in readers:
                     data = client.recv(BUFFER_SIZE)

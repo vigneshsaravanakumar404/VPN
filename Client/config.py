@@ -4,8 +4,6 @@ VPN Client Configuration
 Central configuration file for all VPN client settings
 """
 
-import os
-
 # ============================================================================
 # PRODUCTION CONFIGURATION - EDIT THESE FOR YOUR DEPLOYMENT
 # ============================================================================

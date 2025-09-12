@@ -5,10 +5,10 @@ Main graphical user interface for the VPN client
 """
 
 import tkinter as tk
-from tkinter import messagebox
-import threading
 import time
-import sys
+from tkinter import messagebox
+from threading import Thread
+from sys import exit
 
 from config import *
 from vpn_client import VPNClient
@@ -284,9 +284,7 @@ class ModernVPNGui(tk.Tk):
 
     def auto_connect(self):
         """Auto-connect on startup"""
-        self.auto_connect_thread = threading.Thread(
-            target=self._auto_connect_thread, daemon=True
-        )
+        self.auto_connect_thread = Thread(target=self._auto_connect_thread, daemon=True)
         self.auto_connect_thread.start()
 
     def _auto_connect_thread(self):
@@ -308,7 +306,7 @@ class ModernVPNGui(tk.Tk):
             self.after(0, self._update_ui_connected)
 
             # Start stats updater
-            self.stats_update_thread = threading.Thread(
+            self.stats_update_thread = Thread(
                 target=self._update_stats_loop, daemon=True
             )
             self.stats_update_thread.start()
@@ -362,7 +360,7 @@ class ModernVPNGui(tk.Tk):
         """Enable VPN protection"""
         self.toggle_btn.config(state="disabled", text="CONNECTING...")
 
-        thread = threading.Thread(target=self._enable_protection_thread, daemon=True)
+        thread = Thread(target=self._enable_protection_thread, daemon=True)
         thread.start()
 
     def _enable_protection_thread(self):
@@ -379,7 +377,7 @@ class ModernVPNGui(tk.Tk):
 
             # Start stats updater
             if not self.stats_update_thread or not self.stats_update_thread.is_alive():
-                self.stats_update_thread = threading.Thread(
+                self.stats_update_thread = Thread(
                     target=self._update_stats_loop, daemon=True
                 )
                 self.stats_update_thread.start()
@@ -426,7 +424,7 @@ class ModernVPNGui(tk.Tk):
         )
 
         # Start in thread
-        thread = threading.Thread(target=self.tray_icon.run, daemon=True)
+        thread = Thread(target=self.tray_icon.run, daemon=True)
         thread.start()
 
     def minimize_to_tray(self):
@@ -443,7 +441,7 @@ class ModernVPNGui(tk.Tk):
         """Quit application"""
         self.cleanup_on_exit()
         self.quit()
-        sys.exit(0)
+        exit(0)
 
     def center_window(self):
         """Center window on screen"""
