@@ -99,7 +99,7 @@ def setup_system_tray(
     # Create icon
     image = create_tray_icon()
 
-    # Create menu
+    # Create menu with Show, Enable/Disable, and Quit options
     menu = pystray.Menu(
         item("Show", show_callback, default=True),
         item(
@@ -113,7 +113,7 @@ def setup_system_tray(
             visible=lambda item: parent.is_protected,
         ),
         pystray.Menu.SEPARATOR,
-        item("Exit", quit_callback),
+        item("Quit", quit_callback),  # Quit option for right-click menu
     )
 
     # Create tray icon

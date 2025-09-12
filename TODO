@@ -1,11 +1,12 @@
 TODO:
 
-- Auto configure proxy on user's machine
 - Auto remove proxy on exit
 - Create EXE for client version without Python dependency
-- Create small GUI for client version to be able to start/stop VPN and configure settings
 - EC2 Deployment for server version
 
-TODO Version 2:
+Bugs:
 
-- Make full VPN
+- Random clicks produce errors
+- Redundant controls
+- No on close protection for proxy removal
+- missing positional argument for on minimize

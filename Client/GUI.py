@@ -72,6 +72,16 @@ class ModernVPNGui(tk.Tk):
         if self.tray_icon:
             self.tray_icon.stop()
 
+    def minimize_to_tray(self):
+        """Minimize window to system tray (hides from taskbar)"""
+        self.withdraw()
+
+    def show_window(self):
+        """Show window from tray"""
+        self.deiconify()
+        self.lift()
+        self.focus_force()
+
     def click_window(self, event):
         """Handle window click for dragging"""
         self.offset_x = event.x
