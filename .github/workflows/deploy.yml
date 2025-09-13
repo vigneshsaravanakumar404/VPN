@@ -1,0 +1,28 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy
+        env:
+          KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOST: ${{ secrets.SSH_HOST }}
+          USER: ${{ secrets.SSH_USER }}
+        run: |
+          echo "$KEY" > key.pem && chmod 600 key.pem
+          scp -o StrictHostKeyChecking=no -i key.pem -r * ${USER}@${HOST}:~/app/
+          ssh -o StrictHostKeyChecking=no -i key.pem ${USER}@${HOST} '
+            cd ~/app
+            pkill -f Server.py || true
+            pip3 install -r requirements.txt
+            nohup python3 Server/Server.py > server.log 2>&1 &
+          '
+          rm key.pem
