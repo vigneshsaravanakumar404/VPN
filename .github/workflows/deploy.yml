@@ -11,18 +11,27 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Deploy
+      - name: Debug Deploy
         env:
           KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           HOST: ${{ secrets.SSH_HOST }}
           USER: ${{ secrets.SSH_USER }}
         run: |
-          echo "$KEY" > key.pem && chmod 600 key.pem
-          scp -o StrictHostKeyChecking=no -i key.pem -r * ${USER}@${HOST}:~/app/
-          ssh -o StrictHostKeyChecking=no -i key.pem ${USER}@${HOST} '
-            cd ~/app
-            pkill -f Server.py || true
-            pip3 install -r requirements.txt
-            nohup python3 Server/Server.py > server.log 2>&1 &
-          '
+          echo "Testing connection to $HOST as $USER"
+          echo "$KEY" > key.pem
+          chmod 600 key.pem
+
+          # Debug: Check key format
+          echo "Key first line:"
+          head -n 1 key.pem
+
+          # Test connection with verbose output
+          ssh -vv -o StrictHostKeyChecking=no -i key.pem ${USER}@${HOST} "echo 'Connection successful!'" || true
+
+          # If that fails, try converting key format
+          ssh-keygen -p -m PEM -f key.pem -N "" || true
+
+          # Try again
+          ssh -o StrictHostKeyChecking=no -i key.pem ${USER}@${HOST} "echo 'Connection successful after conversion!'" || true
+
           rm key.pem
