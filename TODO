@@ -2,7 +2,6 @@ TODO:
 
 - Auto remove proxy on exit
 - Create EXE for client version without Python dependency
-- EC2 Deployment for server version
 - Create README
 
 Bugs:
