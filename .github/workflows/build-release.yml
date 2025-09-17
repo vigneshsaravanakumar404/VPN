@@ -31,7 +31,7 @@ jobs:
 
       - name: Build EXE with PyInstaller
         run: |
-          python -m PyInstaller --onefile --windowed --name="AWS_EC2_VPN" --distpath=dist Client/main.py
+          python -m PyInstaller --onefile --windowed --name="ECVPN" --distpath=dist Client/Main.py
 
       - name: Get version from tag
         id: get_version
