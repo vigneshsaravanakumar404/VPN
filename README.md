@@ -1,27 +1,21 @@
-<div align="center">
-  <table style="border: none; border-collapse: collapse;">
-    <tr>
-      <td style="padding: 20px; width: 50%;">
-        <img src="Assets/IP%20Change.gif" alt="IP Location Change" style="width: 100%; max-width: 600px; height: auto; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        <h3 align="center">🌍 IP Location Change</h3>
-      </td>
-      <td style="padding: 20px; width: 50%;">
-        <img src="Assets/Speed.gif" alt="Speed Test" style="width: 100%; max-width: 600px; height: auto; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        <h3 align="center">⚡ Speed Test</h3>
-      </td>
-    </tr>
-  </table>
-</div>
-
-<br>
-<br>
+<table>
+  <tr>
+    <td width="50%">
+      <img src="Assets/IP%20Change.gif" alt="IP Location Change" width="100%">
+    </td>
+    <td width="50%">
+      <img src="Assets/Speed.gif" alt="Speed Test" width="100%">
+    </td>
+  </tr>
+</table>
 
 # EC2 VPN
 
-A custom VPN implementation built from scratch that routes internet traffic through an AWS EC2 instance. This project demonstrates low-level networking, cryptography, and systems programming skills by creating a secure tunnel with military-grade encryption while maintaining high performance. The Windows client connects to a Linux-based server running on AWS EC2.
+A custom VPN implementation built from scratch that routes internet traffic through an AWS EC2 instance (t4g.nano costing $3.04/month). The .exe is a standalone Windows 10/11 client that auto-configures and connects to the VPN server with a single click. hTe VPN uses AES-256-GCM encryption. This was created fully with python + tkinter for the GUI. The server is deployed through a GitHub Actions CI/CD pipeline that builds and deploys a Docker container to the EC2 instance on every push to main.
 
 ## Features
 
+- **Auto Setup** - One-click activation of VPN on Windows 10/11 client machines
 - **IP Address Masking** - Routes all traffic through AWS EC2 instance to hide real location
 - **Encryption** - AES-256-GCM encryption with perfect forward secrecy
 - **High Performance** - Achieves 95% of native connection speed with <10ms latency overhead

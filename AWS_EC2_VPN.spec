@@ -3,7 +3,7 @@
 
 a = Analysis(
     ['Client\\main.py'],
-    pathex=[],
+    pathex=['Client'],
     binaries=[],
     datas=[],
     hiddenimports=[],
@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['10400217.png'],
+    icon=['Assets\\icon.ico'],
 )
