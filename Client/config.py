@@ -7,7 +7,9 @@ Central configuration file for all VPN client settings
 # ============================================================================
 # PRODUCTION CONFIGURATION - EDIT THESE FOR YOUR DEPLOYMENT
 # ============================================================================
-VPN_SERVER = "localhost"  # Your VPN server address
+VPN_SERVER = (
+    "ec2-3-15-238-179.us-east-2.compute.amazonaws.com"  # Your VPN server address
+)
 VPN_PORT = 9999  # Your VPN server port
 HTTP_PROXY_PORT = 8080  # Local HTTP proxy port
 SOCKS_PROXY_PORT = 1080  # Local SOCKS5 proxy port
