@@ -31,7 +31,7 @@ jobs:
 
       - name: Build EXE with PyInstaller
         run: |
-          python -m PyInstaller --onefile --windowed --name="ECVPN" --distpath=dist Client/Main.py
+          python -m PyInstaller --onefile --windowed --name="AWS_EC2_VPN" --icon=Assets/icon.png --paths=Client --distpath=dist Client/main.py
 
       - name: Get version from tag
         id: get_version
@@ -45,6 +45,11 @@ jobs:
           body: |
             ## Download
             Download `AWS_EC2_VPN.exe` below to get started.
+
+            ## Installation
+            1. Download the exe file
+            2. Run AWS_EC2_VPN.exe
+            3. No Python installation required
 
             ## Changes
             - Built from commit: ${{ github.sha }}
