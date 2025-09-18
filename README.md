@@ -11,7 +11,7 @@
 
 # EC2 VPN
 
-A custom VPN implementation built from scratch that routes internet traffic through an AWS EC2 instance (t4g.nano costing $3.04/month). The .exe is a standalone Windows 10/11 client that auto-configures and connects to the VPN server with a single click. hTe VPN uses AES-256-GCM encryption. This was created fully with python + tkinter for the GUI. The server is deployed through a GitHub Actions CI/CD pipeline that builds and deploys a Docker container to the EC2 instance on every push to main.
+A custom VPN implementation built from scratch that routes internet traffic through an AWS EC2 instance (t4g.nano costing $3.04/month). The .exe is a standalone Windows 10/11 client that auto-configures and connects to the VPN server with a single click. The VPN uses AES-256-GCM encryption. This was created fully with python + tkinter for the GUI. The server is deployed through a GitHub Actions CI/CD pipeline that builds and deploys a Docker container to the EC2 instance on every push to main.
 
 ## Features
 
